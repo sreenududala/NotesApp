@@ -18,7 +18,7 @@ class _SignupScreenState extends State<SignupScreen> {
         email: email.text.trim(),
         password: password.text.trim(),
       );
-      Navigator.pop(context); // Go back to login
+      Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Signup failed: $e")),

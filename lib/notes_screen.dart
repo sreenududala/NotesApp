@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:notesapp/addnotes_screen.dart';
-
-
-
+import 'package:notesapp/noteview_screen.dart';
 
 
 class NotesHome extends StatefulWidget {
@@ -14,14 +12,12 @@ class NotesHome extends StatefulWidget {
 }
 
 class _NotesHomeState extends State<NotesHome> {
-  List<Map<String, String>> notes =[
-
-  ];
+  List<Map<String, String>> notes = [];
 
   void openAddNotePage() async {
     final newNote = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) =>  AddNoteScreen()),
+      MaterialPageRoute(builder: (_) => AddNoteScreen()),
     );
 
     if (newNote != null) {
@@ -33,25 +29,26 @@ class _NotesHomeState extends State<NotesHome> {
       });
     }
   }
+
   void deleteNote(int index) {
     setState(() {
       notes.removeAt(index);
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Note deleted")),
+      const SnackBar(content: Text("Note deleted")),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey,
+      backgroundColor: Colors.grey[200],
       appBar: AppBar(
-        title:  Text("Notes Home"),
-
+        title: const Text("Notes Home"),
         actions: [
           IconButton(
-            icon:  Icon(Icons.logout),
+            icon: const Icon(Icons.logout),
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
             },
@@ -61,15 +58,10 @@ class _NotesHomeState extends State<NotesHome> {
       body: Column(
         children: [
           Container(
-            padding:  EdgeInsets.all(20),
-            child: Column(
-              children: [
-                 Text(
-                  "Your Notes",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-
-              ],
+            padding: const EdgeInsets.all(20),
+            child: const Text(
+              "Your Notes",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ),
           Expanded(
@@ -78,14 +70,14 @@ class _NotesHomeState extends State<NotesHome> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                   Text(
+                  const Text(
                     "No notes yet",
                     style: TextStyle(fontSize: 18),
                   ),
-                   SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: openAddNotePage,
-                    child:  Text("Add a note"),
+                    child: const Text("Add a note"),
                   ),
                 ],
               ),
@@ -96,43 +88,63 @@ class _NotesHomeState extends State<NotesHome> {
                 final note = notes[index];
                 return Card(
                   elevation: 5,
-                  margin:  EdgeInsets.all(10),
+                  margin: const EdgeInsets.all(10),
                   child: ListTile(
                     title: Text(
                       note['title']!,
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     subtitle: Text(note['desc']!),
-    trailing: IconButton(
-    icon:  Icon(Icons.delete, color: Colors.red),
-    onPressed: () {
-    showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-    title:  Text("Delete Note"),
-    content:  Text(
-    "Are you sure you want to delete this note?"),
-    actions: [
-    TextButton(
-    onPressed: () =>
-    Navigator.pop(context),
-    child:  Text("Cancel"),
-    ),
-    TextButton(
-    onPressed: () {
-    deleteNote(index);
-    Navigator.pop(context);
-    },
-    child:  Text(
-    "Delete",
-      style: TextStyle(color: Colors.red),
-    ),
-    ),
-    ],
-    ),
-    );
-    },
-    ),
+                    onTap: () async {
+                      final updatedNote = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => NoteViewScreen(
+                            note: note,
+                            index: index,
+                          ),
+                        ),
+                      );
+
+                      if (updatedNote != null) {
+                        setState(() {
+                          notes[index] = updatedNote;
+                        });
+                      }
+                    },
+                    trailing: IconButton(
+                      icon:
+                      const Icon(Icons.delete, color: Colors.redAccent),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text("Delete Note"),
+                            content: const Text(
+                                "Are you sure you want to delete this note?"),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text("Cancel"),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  deleteNote(index);
+                                  Navigator.pop(context);
+                                },
+                                child: const Text(
+                                  "Delete",
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 );
               },

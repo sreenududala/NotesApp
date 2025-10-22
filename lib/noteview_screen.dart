@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:notesapp/note_edit_screen.dart';
+
+import 'package:notesapp/noteedit_screen.dart';
 
 class NoteViewScreen extends StatelessWidget {
   final Map<String, String> note;
@@ -30,10 +31,10 @@ class NoteViewScreen extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding:  EdgeInsets.all(16),
         child: Text(
           note['desc'] ?? '',
-          style: const TextStyle(fontSize: 18),
+          style:  TextStyle(fontSize: 18),
         ),
       ),
     );
